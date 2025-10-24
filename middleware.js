@@ -2,21 +2,24 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  const proxyUrl = new URL(request.url);
-  proxyUrl.hostname = '172.238.77.184';
-  proxyUrl.port = '20870';
-  proxyUrl.protocol = 'http:';
+  // Получаем путь запроса
+  const url = request.nextUrl.clone();
   
-  const auth = Buffer.from('nnc_shop_bot_N9oPAcmO:EguGcXoO3LGqZWSU').toString('base64');
+  // Меняем хост на прокси
+  url.hostname = '172.238.77.184';
+  url.port = '20870';
+  url.protocol = 'http:';
   
-  return NextResponse.rewrite(proxyUrl.toString(), {
-    headers: {
-      'Authorization': `Basic ${auth}`,
-      // Убираем подмену IP - показываем реальный IP прокси
-      'X-Forwarded-For': request.headers.get('x-forwarded-for') || request.ip,
-      'X-Real-IP': request.headers.get('x-real-ip') || request.ip
-    }
-  });
+  // Создаем новый запрос с авторизацией
+  const response = NextResponse.rewrite(url);
+  
+  // Добавляем заголовок авторизации
+  response.headers.set(
+    'Authorization', 
+    'Basic ' + Buffer.from('nnc_shop_bot_N9oPAcmO:EguGcXoO3LGqZWSU').toString('base64')
+  );
+  
+  return response;
 }
 
 export const config = {
