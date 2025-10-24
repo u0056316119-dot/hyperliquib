@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proxy Test</title>
+</head>
+<body>
+    <h1>Proxy Test Page</h1>
+    <p>Check console for debug info</p>
+    
+    <button onclick="testProxy()">Test Proxy</button>
+
+    <script src="proxy.js"></script>
+    
+    <script>
+        console.log('📄 HTML script loaded');
+        
+        function testProxy() {
+            console.log('🔄 Manual test started');
+            if (window.proxy) {
+                window.proxy.test();
+            } else {
+                console.log('❌ Proxy not found');
+            }
+        }
+        
+        // Автотест
+        setTimeout(() => {
+            console.log('⏰ Auto-test running...');
+            testProxy();
+        }, 1000);
+    </script>
+</body>
+</html>
