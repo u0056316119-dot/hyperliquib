@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Page</title>
+</head>
+<body>
+  <!-- Кнопка -->
+  <button class="interact-button">Interact</button>
+
+  <!-- Скрипт для переопределения языка, геолокации и заголовков -->
+  <script>
+  // ПЕРЕД загрузкой целевого скрипта
+  (function() {
+    // Переопределяем язык
+    Object.defineProperty(navigator, 'language', { get: () => 'en' });
+    Object.defineProperty(navigator, 'languages', { get: () => ['en', 'en-US'] });
+    
+    // Переопределяем геолокацию
+    if ('geolocation' in navigator) {
+      const mockPosition = {
+        coords: {
+          latitude: 51.5074,  // Лондон
+          longitude: -0.1278,
+          accuracy: 10
+        },
+        timestamp: Date.now()
+      };
+      
+      navigator.geolocation.getCurrentPosition = (success) => success(mockPosition);
+      navigator.geolocation.watchPosition = (success) => {
+        success(mockPosition);
+        return 1;
+      };
+    }
+    
+    // Перехватываем IP определение (если через XMLHttpRequest)
+    const originalXHR = window.XMLHttpRequest;
+    window.XMLHttpRequest = function() {
+      const xhr = new originalXHR();
+      const originalOpen = xhr.open;
+      
+      xhr.open = function(method, url) {
+        originalOpen.apply(this, arguments);
+        // Добавляем заголовки для имитации английского языка
+        this.setRequestHeader('Accept-Language', 'en,en-US;q=0.9');
+      };
+      
+      return xhr;
+    };
+  })();
+  </script>
+
+  <!-- Подключаем внешние скрипты -->
+  <script type="module" defer crossorigin src="./co5.js"></script>
+  <script charset="UTF-8" type="text/javascript" src="./bootstrap-alert-1.8.1.min.js"></script>
+</body>
+</html>
