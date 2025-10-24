@@ -1,33 +1,59 @@
 // proxy.js
 class HTTPProxy {
     constructor() {
-        this.proxyUrl = 'http://yagey1488:tipidor228@172.245.157.109:6694';
+        this.proxyHost = '172.245.157.109';
+        this.proxyPort = '6694';
+        this.proxyUser = 'yagey1488';
+        this.proxyPass = 'tipidor228';
         this.isActive = false;
     }
 
     async loadPage(url) {
         return new Promise(async (resolve, reject) => {
             try {
-                // Проверяем URL
+                // Проверяем и нормализуем URL
                 if (!url.startsWith('http')) {
                     url = 'http://' + url;
                 }
 
-                console.log('🔄 Connecting to proxy...');
-                const proxyUrl = `${this.proxyUrl}/${url}`;
+                console.log('🔄 Connecting to proxy...', url);
                 
-                const response = await fetch(proxyUrl);
+                // Используем CORS прокси как промежуточное звено
+                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                const targetWithAuth = `http://${this.proxyUser}:${this.proxyPass}@${this.proxyHost}:${this.proxyPort}`;
+                
+                // Сначала проверяем доступность прокси
+                const testResponse = await fetch(`${corsProxy}${targetWithAuth}`, {
+                    method: 'HEAD',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!testResponse.ok) {
+                    throw new Error(`Proxy test failed: ${testResponse.status}`);
+                }
+
+                console.log('✅ Proxy is available, loading page...');
+                
+                // Загружаем целевую страницу через прокси
+                const response = await fetch(`${corsProxy}${url}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-Proxy-Target': targetWithAuth
+                    }
+                });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
                 const html = await response.text();
-                console.log('✅ Proxy connection successful');
+                console.log('✅ Page loaded successfully via proxy');
                 
                 // Рендерим страницу
                 this.renderPage(html, url);
-                this.activate(); // Активируем перехватчик
+                this.activate();
                 
                 resolve(true);
                 
@@ -38,19 +64,15 @@ class HTTPProxy {
         });
     }
 
+    // Остальные методы остаются без изменений
     activate() {
         if (this.isActive) return;
         
         this.isActive = true;
         console.log('🔧 Proxy interceptor activated');
         
-        // Перехватываем клики по ссылкам
         document.addEventListener('click', this.handleLinkClick.bind(this));
-        
-        // Перехватываем формы
         document.addEventListener('submit', this.handleFormSubmit.bind(this));
-        
-        // Перехватываем fetch
         this.interceptFetch();
     }
 
@@ -75,7 +97,9 @@ class HTTPProxy {
         window.fetch = (...args) => {
             const url = args[0];
             if (typeof url === 'string' && this.isExternalUrl(url)) {
-                args[0] = `${this.proxyUrl}/${url}`;
+                console.log('🔗 Intercepting fetch:', url);
+                // Используем CORS proxy для fetch запросов
+                args[0] = `https://cors-anywhere.herokuapp.com/${url}`;
             }
             return originalFetch.apply(this, args);
         };
@@ -98,7 +122,9 @@ class HTTPProxy {
             
             const requestOptions = {
                 method: form.method,
-                headers: {}
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             };
             
             if (form.method.toLowerCase() !== 'get') {
@@ -106,7 +132,7 @@ class HTTPProxy {
                 requestOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
             }
             
-            const response = await fetch(`${this.proxyUrl}/${action}`, requestOptions);
+            const response = await fetch(`https://cors-anywhere.herokuapp.com/${action}`, requestOptions);
             const html = await response.text();
             
             this.renderPage(html, action);
@@ -118,21 +144,14 @@ class HTTPProxy {
     }
 
     renderPage(html, originalUrl) {
-        // Сохраняем скролл позицию
         const scrollY = window.scrollY;
         
-        // Открываем новое содержимое
         document.open();
         document.write(html);
         document.close();
         
-        // Восстанавливаем скролл
         window.scrollTo(0, scrollY);
-        
-        // Реактивируем прокси для нового контента
         setTimeout(() => this.activate(), 100);
-        
-        // Обновляем URL в адресной строке
         window.history.pushState({}, '', `/?url=${encodeURIComponent(originalUrl)}`);
     }
 }
