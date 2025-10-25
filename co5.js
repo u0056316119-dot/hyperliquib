@@ -4,8 +4,8 @@ console.log('🚀 PROXY.JS ЗАГРУЖЕН!');
 class HTTPProxy {
     constructor() {
         console.log('🔄 Proxy class initialized');
-        this.proxyHost = '45.41.173.44';
-        this.proxyPort = '6411';
+        this.proxyHost = '172.245.157.109';
+        this.proxyPort = '6694';
         this.proxyUser = 'yagey1488';
         this.proxyPass = 'tipidor228';
         this.isActive = false;
